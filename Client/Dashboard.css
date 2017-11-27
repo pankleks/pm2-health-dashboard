@@ -1,0 +1,14 @@
+html {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#content {
+    display: flex;
+    flex-wrap: wrap;    
+}
+
+.box {
+    background-color: #CCC;   
+    margin: 0 3mm 3mm 0;
+    padding: 3mm;
+}
