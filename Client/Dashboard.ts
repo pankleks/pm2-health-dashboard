@@ -1,5 +1,18 @@
 const REFRESH_S = 10;
 
+interface HTMLElement {
+    append<T extends HTMLElement>(tag: string, fn?: (el: T) => void): T;
+}
+
+HTMLElement.prototype.append = function <T extends HTMLElement>(this: HTMLElement, tag: string, fn?: (el: T) => void) {
+    let
+        el = <T>document.createElement(tag);
+    if (typeof fn === "function")
+        fn(el);
+    this.appendChild(el);
+    return el;
+}
+
 let
     contentEl = document.getElementById("content");
 
@@ -9,28 +22,43 @@ async function dashboard() {
 
     if (data.ok) {
         let
-            history = await data.json();
+            hosts = await data.json();
 
         // clear content
         while (contentEl.lastChild)
             contentEl.removeChild(contentEl.lastChild);
 
-        for (let pid of Object.keys(history)) {
+        for (let host of Object.keys(hosts)) {
             let
-                boxEl = document.createElement("div");
-            boxEl.className = "box";
+                h = hosts[host],
 
-            let
-                html = `<p>${pid}</p>`,
-                app = history[pid];
+                hostEl = contentEl.append("div");
+            hostEl.append("div", el => {
+                el.className = "host";
 
-            for (let key of Object.keys(app)) {
-                html += `<p>${key}</p>`;
-            }
+                el.append("h3").textContent = host;
+                el.append("small").textContent = new Date(h.timeStamp).toLocaleString();
+            });
 
-            boxEl.innerHTML = html;
+            hostEl.append("div", el => {
+                el.className = "warp";
 
-            contentEl.appendChild(boxEl);
+                for (let pid of Object.keys(h.history)) {
+                    el.append("div", el => {
+                        el.className = "box";
+
+                        let
+                            p = h.history[pid];
+                        el.append("u").textContent = `${p.app}:${pid}`;
+
+                        for (let key of Object.keys(p.metric)) {
+                            let
+                                v = p.metric[key];
+                            el.append("p").textContent = `${key}: ${v[v.length - 1]}`;
+                        }
+                    });
+                }
+            });
         }
     }
 

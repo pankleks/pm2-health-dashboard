@@ -1,14 +1,21 @@
 {
   "name": "pm2-health-dashboard",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "",
   "main": "App.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Krzysztof Heim",
+  "license": "MIT",
+  "config": {
+    "port": 8888,
+    "tokens": []
+  },
   "devDependencies": {
     "@types/node": "^8.0.53"
+  },
+  "dependencies": {
+    "pm2": "^2.8.0"
   }
 }

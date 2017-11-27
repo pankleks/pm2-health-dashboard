@@ -2,9 +2,19 @@ html {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-#content {
+.warp {
     display: flex;
     flex-wrap: wrap;    
+}
+
+.host {
+    display: flex;
+    flex-direction: row;
+    align-items: center;    
+}
+
+.host > small {
+    margin-left: auto;
 }
 
 .box {
