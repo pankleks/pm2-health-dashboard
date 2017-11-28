@@ -36,6 +36,8 @@ Pmx.initModule({
             type: "application/json",
             fn: (data) => {
                 let payload = JSON.parse(data);
+                if (!payload.token || config.tokens.indexOf(payload.token) === -1)
+                    throw new Error(`not authenticated`);
                 if (payload.host)
                     hosts[payload.host] = payload;
             }
