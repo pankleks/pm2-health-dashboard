@@ -1,6 +1,6 @@
 {
   "name": "pm2-health-dashboard",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "",
   "main": "App.js",
   "scripts": {

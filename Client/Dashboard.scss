@@ -1,0 +1,18 @@
+@import "Flex.scss";
+
+html {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.host > small {
+    margin-left: auto;
+}
+
+.box {
+    background-color: #CCC;       
+    padding: 3mm;
+}
+
+.bad {
+    color: red;
+}

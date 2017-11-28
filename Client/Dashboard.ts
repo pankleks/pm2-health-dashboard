@@ -1,16 +1,24 @@
 const REFRESH_S = 10;
 
 interface HTMLElement {
-    append<T extends HTMLElement>(tag: string, fn?: (el: T) => void): T;
+    $add<T extends HTMLElement>(tag: string, css?: string, fn?: (el: T) => void): T;
+    $clear(): void;
 }
 
-HTMLElement.prototype.append = function <T extends HTMLElement>(this: HTMLElement, tag: string, fn?: (el: T) => void) {
+HTMLElement.prototype.$add = function <T extends HTMLElement>(this: HTMLElement, tag: string, css?: string, fn?: (el: T) => void) {
     let
         el = <T>document.createElement(tag);
+    if (css)
+        el.className = css;
     if (typeof fn === "function")
         fn(el);
     this.appendChild(el);
     return el;
+}
+
+HTMLElement.prototype.$clear = function (this: HTMLElement) {
+    while (this.lastChild)
+        this.removeChild(this.lastChild);
 }
 
 let
@@ -24,37 +32,30 @@ async function dashboard() {
         let
             hosts = await data.json();
 
-        // clear content
-        while (contentEl.lastChild)
-            contentEl.removeChild(contentEl.lastChild);
+        contentEl.$clear();
 
         for (let host of Object.keys(hosts)) {
             let
                 h = hosts[host],
 
-                hostEl = contentEl.append("div");
-            hostEl.append("div", el => {
-                el.className = "host";
-
-                el.append("h3").textContent = host;
-                el.append("small").textContent = new Date(h.timeStamp).toLocaleString();
+                hostEl = contentEl.$add("div", "flex v list");
+            hostEl.$add("div", "flex h list", el => {
+                el.$add("h3").textContent = host;
+                el.$add("small").textContent = new Date(h.timeStamp).toLocaleString();
             });
 
-            hostEl.append("div", el => {
-                el.className = "warp";
-
-                for (let pid of Object.keys(h.history)) {
-                    el.append("div", el => {
-                        el.className = "box";
-
+            hostEl.$add("div", "flex w list", el => {
+                for (let pid of Object.keys(h.snapshot)) {
+                    el.$add("div", "box flex v list", el => {
                         let
-                            p = h.history[pid];
-                        el.append("u").textContent = `${p.app}:${pid}`;
+                            p = h.snapshot[pid];
+                        el.$add("u").textContent = `${p.app}:${pid}`;
 
                         for (let key of Object.keys(p.metric)) {
                             let
                                 v = p.metric[key];
-                            el.append("p").textContent = `${key}: ${v[v.length - 1]}`;
+
+                            el.$add("p", v.bad ? "bad" : "").textContent = `${key}: ${v.v}`;
                         }
                     });
                 }

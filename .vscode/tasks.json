@@ -6,8 +6,23 @@
         {
             "type": "typescript",
             "tsconfig": "tsconfig.json",
-            "problemMatcher": [
-                "$tsc"
+            "problemMatcher": "$tsc"
+        },
+        {
+            "label": "sass",
+            "type": "shell",
+            "command": "node-sass",
+            "args": [
+                "./Client/Dashboard.scss",
+                "./Client/Dashboard.css"
+            ],
+            "problemMatcher": "$node-sass"
+        },
+        {
+            "label": "all",
+            "dependsOn": [
+                "typescript",
+                "sass"
             ],
             "group": {
                 "kind": "build",
