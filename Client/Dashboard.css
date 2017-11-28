@@ -27,11 +27,12 @@
     .flex > .fill.auto {
       overflow: auto; }
 
-html {
-  font-family: Verdana, Geneva, Tahoma, sans-serif; }
+html, body {
+  height: 100%; }
 
-.host > small {
-  margin-left: auto; }
+body {
+  margin: 0;
+  font-family: Verdana, Geneva, Tahoma, sans-serif; }
 
 .box {
   background-color: #CCC;

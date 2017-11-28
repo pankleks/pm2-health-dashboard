@@ -1,6 +1,8 @@
 const REFRESH_S = 10;
-HTMLElement.prototype.$add = function (tag, fn) {
+HTMLElement.prototype.$add = function (tag, css, fn) {
     let el = document.createElement(tag);
+    if (css)
+        el.className = css;
     if (typeof fn === "function")
         fn(el);
     this.appendChild(el);
@@ -17,26 +19,19 @@ async function dashboard() {
         let hosts = await data.json();
         contentEl.$clear();
         for (let host of Object.keys(hosts)) {
-            let h = hosts[host], hostEl = contentEl.$add("div");
-            hostEl.$add("div", el => {
-                el.className = "host";
+            let h = hosts[host], hostEl = contentEl.$add("div", "flex v list");
+            hostEl.$add("div", "flex h list", el => {
                 el.$add("h3").textContent = host;
                 el.$add("small").textContent = new Date(h.timeStamp).toLocaleString();
             });
-            hostEl.$add("div", el => {
-                el.className = "warp";
-                for (let pid of Object.keys(h.history)) {
-                    el.$add("div", el => {
-                        el.className = "box";
-                        let p = h.history[pid];
+            hostEl.$add("div", "flex w list", el => {
+                for (let pid of Object.keys(h.snapshot)) {
+                    el.$add("div", "box flex v list", el => {
+                        let p = h.snapshot[pid];
                         el.$add("u").textContent = `${p.app}:${pid}`;
                         for (let key of Object.keys(p.metric)) {
                             let v = p.metric[key];
-                            el.$add("p", el => {
-                                if (v.bad)
-                                    el.className = "bad";
-                                el.textContent = `${key}: ${v.v}`;
-                            });
+                            el.$add("p", v.bad ? "bad" : "").textContent = `${key}: ${v.v}`;
                         }
                     });
                 }

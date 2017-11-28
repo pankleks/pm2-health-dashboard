@@ -37,8 +37,8 @@ async function dashboard() {
         for (let host of Object.keys(hosts)) {
             let
                 h = hosts[host],
-
                 hostEl = contentEl.$add("div", "flex v list");
+
             hostEl.$add("div", "flex h list", el => {
                 el.$add("h3").textContent = host;
                 el.$add("small").textContent = new Date(h.timeStamp).toLocaleString();

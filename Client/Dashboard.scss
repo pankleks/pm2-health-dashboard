@@ -1,11 +1,12 @@
 @import "Flex.scss";
 
-html {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+html, body {
+    height: 100%;
 }
 
-.host > small {
-    margin-left: auto;
+body {
+    margin: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .box {
