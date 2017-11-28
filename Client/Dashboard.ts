@@ -1,4 +1,4 @@
-const REFRESH_S = 10;
+const REFRESH_S = 100;
 
 interface HTMLElement {
     $add<T extends HTMLElement>(tag: string, css?: string, fn?: (el: T) => void): T;
@@ -37,16 +37,16 @@ async function dashboard() {
         for (let host of Object.keys(hosts)) {
             let
                 h = hosts[host],
-                hostEl = contentEl.$add("div", "flex v list");
+                hostEl = contentEl.$add("div", "flex v s3");
 
-            hostEl.$add("div", "flex h list", el => {
+            hostEl.$add("div", "flex h center", el => {
                 el.$add("h3").textContent = host;
-                el.$add("small").textContent = new Date(h.timeStamp).toLocaleString();
+                el.$add("small", "end").textContent = new Date(h.timeStamp).toLocaleString();
             });
 
-            hostEl.$add("div", "flex w list", el => {
+            hostEl.$add("div", "flex w s3", el => {
                 for (let pid of Object.keys(h.snapshot)) {
-                    el.$add("div", "box flex v list", el => {
+                    el.$add("div", "box flex v s1", el => {
                         let
                             p = h.snapshot[pid];
                         el.$add("u").textContent = `${p.app}:${pid}`;
@@ -55,7 +55,7 @@ async function dashboard() {
                             let
                                 v = p.metric[key];
 
-                            el.$add("p", v.bad ? "bad" : "").textContent = `${key}: ${v.v}`;
+                            el.$add("small", v.bad ? "bad" : "").textContent = `${key}: ${v.v}`;
                         }
                     });
                 }

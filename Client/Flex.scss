@@ -1,4 +1,32 @@
-$list-padding: 3mm;
+$space: 1mm;
+
+@mixin hspace($n) {
+    > * {
+        margin-right: $n * $space;
+        margin-left: 0;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }  
+}
+
+@mixin vspace($n) {
+    > * {
+        margin-bottom: $n * $space;
+        margin-top: 0;
+
+        &:last-child {
+            margin-bottom: 0;
+        } 
+    }
+}
+
+@mixin wspace($n) {
+    > * {
+        margin: 0 $n * $space $n * $space 0;
+    }
+}
 
 .flex {
     display: flex;
@@ -6,45 +34,53 @@ $list-padding: 3mm;
     &.h {
         flex-direction: row;
 
-        &.list {
-            margin-right: $list-padding;
-            margin-left: 0;
-    
-            &:last-child {
-                margin-right: 0;
-            }            
+        &.s1 {
+            @include hspace(1);
+        }
+
+        &.s3 {
+            @include hspace(3);
         }
 
         &.center {
             align-items: center;            
-        }
+        } 
+        
+        > .end {
+            margin-left: auto;
+        }        
     }
 
     &.v {
         flex-direction: column;
 
-        &.list {
-            margin-bottom: $list-padding;
-            margin-top: 0;
-    
-            &:last-child {
-                margin-bottom: 0;
-            }            
-        }        
+        &.s1 {
+            @include vspace(1);
+        }
+
+        &.s3 {
+            @include vspace(3);
+        }   
+        
+        > .end {
+            align-self: flex-end;
+        }         
     }
 
     &.w {
         flex-wrap: wrap;
 
-        &.list {
-            > * {
-                margin: 0 $list-padding $list-padding 0;
-            }
-        }        
+        &.s1 {
+            @include wspace(1);
+        }
+
+        &.s3 {
+            @include wspace(3);
+        }       
     }
 
     > * {
-        flex: 0 0 auto;        
+        flex: 0 0 auto;     
     }    
 
     > .fill {
