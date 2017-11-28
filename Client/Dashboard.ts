@@ -1,4 +1,4 @@
-const REFRESH_S = 10;
+const REFRESH_S = 20;
 
 interface HTMLElement {
     $add<T extends HTMLElement>(tag: string, css?: string, fn?: (el: T) => void): T;
@@ -55,7 +55,7 @@ async function dashboard(contentEl: HTMLElement) {
                             let
                                 v = p.metric[key];
 
-                            el.$add("small", v.bad ? "bad" : "").textContent = `${key}: ${v.v}`;
+                            el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${v.v}</b>`;
                         }
 
                         el.onclick = () => {
@@ -70,8 +70,6 @@ async function dashboard(contentEl: HTMLElement) {
 
     dashboardT = setTimeout(() => { dashboard(contentEl); }, 1000 * REFRESH_S);
 }
-
-
 
 async function app(contentEl: HTMLElement, host: string, pid: string) {
     google.charts.load("current", { packages: ["corechart"] });

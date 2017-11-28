@@ -1,4 +1,4 @@
-const REFRESH_S = 10;
+const REFRESH_S = 20;
 HTMLElement.prototype.$add = function (tag, css, fn) {
     let el = document.createElement(tag);
     if (css)
@@ -31,7 +31,7 @@ async function dashboard(contentEl) {
                         el.$add("u").textContent = `${p.app}:${pid}`;
                         for (let key of Object.keys(p.metric)) {
                             let v = p.metric[key];
-                            el.$add("small", v.bad ? "bad" : "").textContent = `${key}: ${v.v}`;
+                            el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${v.v}</b>`;
                         }
                         el.onclick = () => {
                             clearTimeout(dashboardT);
