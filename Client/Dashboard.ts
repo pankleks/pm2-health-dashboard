@@ -71,7 +71,11 @@ async function dashboard(contentEl: HTMLElement) {
     dashboardT = setTimeout(() => { dashboard(contentEl); }, 1000 * REFRESH_S);
 }
 
+
+
 async function app(contentEl: HTMLElement, host: string, pid: string) {
+    google.charts.load("current", { packages: ["corechart"] });
+
     let
         data = await fetch("/app", {
             method: "POST",
@@ -89,6 +93,25 @@ async function app(contentEl: HTMLElement, host: string, pid: string) {
         contentEl.$add("div", "flex v s3", el => {
             for (let key of Object.keys(payload.snapshot.metric)) {
                 el.$add("p").textContent = key;
+
+                let
+                    chartEl = el.$add("div", "chart");
+
+                google.charts.setOnLoadCallback(() => {
+                    let
+                        data = google.visualization.arrayToDataTable(
+                            payload.history[key].map((e, i) => [i, e.v]),
+                            true),
+                        options: google.visualization.LineChartOptions = {
+                            title: key,
+                            curveType: "function",
+                            legend: "none"
+                        };
+
+                    let
+                        chart = new google.visualization.LineChart(chartEl);
+                    chart.draw(data, options);
+                });
             }
         });
     }

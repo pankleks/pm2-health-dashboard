@@ -1,6 +1,7 @@
 import * as Http from "http";
 import * as Url from "url";
 import * as Fs from "fs";
+import * as Qs from "querystring";
 import * as Pmx from "pmx";
 import { IPayload } from "./Snapshot";
 
@@ -80,7 +81,7 @@ Pmx.initModule({
                             history: {}
                         };
 
-                    for (let key of Object.keys(snapshot))
+                    for (let key of Object.keys(snapshot.metric))
                         temp.history[key] = history[input.pid + key];
 
                     return JSON.stringify(temp);
@@ -110,9 +111,10 @@ Pmx.initModule({
 
                     if (h) {
                         let
+                            input = Qs.parse(temp.query),
                             content = h.content;
                         if (typeof h.fn === "function")
-                            content = h.fn(data, content);
+                            content = h.fn(data, input, content);
 
                         response.writeHead(200, { "Content-Type": h.type });
                         if (content)

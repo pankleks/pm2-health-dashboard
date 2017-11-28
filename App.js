@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Http = require("http");
 const Url = require("url");
 const Fs = require("fs");
+const Qs = require("querystring");
 const Pmx = require("pmx");
 const MAX_HISTORY = 1440;
 Pmx.initModule({
@@ -64,7 +65,7 @@ Pmx.initModule({
                     snapshot,
                     history: {}
                 };
-                for (let key of Object.keys(snapshot))
+                for (let key of Object.keys(snapshot.metric))
                     temp.history[key] = history[input.pid + key];
                 return JSON.stringify(temp);
             }
@@ -83,9 +84,9 @@ Pmx.initModule({
             try {
                 let h = handle[temp.pathname.toLowerCase()];
                 if (h) {
-                    let content = h.content;
+                    let input = Qs.parse(temp.query), content = h.content;
                     if (typeof h.fn === "function")
-                        content = h.fn(data, content);
+                        content = h.fn(data, input, content);
                     response.writeHead(200, { "Content-Type": h.type });
                     if (content)
                         await write(response, content);

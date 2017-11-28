@@ -45,6 +45,7 @@ async function dashboard(contentEl) {
     dashboardT = setTimeout(() => { dashboard(contentEl); }, 1000 * REFRESH_S);
 }
 async function app(contentEl, host, pid) {
+    google.charts.load("current", { packages: ["corechart"] });
     let data = await fetch("/app", {
         method: "POST",
         body: JSON.stringify({ host, pid })
@@ -56,6 +57,16 @@ async function app(contentEl, host, pid) {
         contentEl.$add("div", "flex v s3", el => {
             for (let key of Object.keys(payload.snapshot.metric)) {
                 el.$add("p").textContent = key;
+                let chartEl = el.$add("div", "chart");
+                google.charts.setOnLoadCallback(() => {
+                    let data = google.visualization.arrayToDataTable(payload.history[key].map((e, i) => [i, e.v]), true), options = {
+                        title: key,
+                        curveType: "function",
+                        legend: "none"
+                    };
+                    let chart = new google.visualization.LineChart(chartEl);
+                    chart.draw(data, options);
+                });
             }
         });
     }

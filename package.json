@@ -15,7 +15,8 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^8.0.53"
+    "@types/node": "^8.0.53",
+    "@types/google.visualization": "^0.0.41"
   },
   "dependencies": {
     "pm2": "^2.8.0"
