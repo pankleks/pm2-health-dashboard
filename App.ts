@@ -20,8 +20,6 @@ Pmx.initModule({
     if (config.port == null)
         config.port = 8888;
 
-    config.tokens = ["54fe2349-5238-428b-b79c-94c07e77f53a"];
-
     let
         hosts = {},
         handle = {

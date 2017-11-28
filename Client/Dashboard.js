@@ -1,4 +1,4 @@
-const REFRESH_S = 100;
+const REFRESH_S = 10;
 HTMLElement.prototype.$add = function (tag, css, fn) {
     let el = document.createElement(tag);
     if (css)

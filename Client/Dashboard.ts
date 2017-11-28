@@ -1,4 +1,4 @@
-const REFRESH_S = 100;
+const REFRESH_S = 10;
 
 interface HTMLElement {
     $add<T extends HTMLElement>(tag: string, css?: string, fn?: (el: T) => void): T;
