@@ -4,6 +4,7 @@ const Http = require("http");
 const Url = require("url");
 const Fs = require("fs");
 const Pmx = require("pmx");
+const MAX_HISTORY = 1440;
 Pmx.initModule({
     type: "generic",
     el: {
@@ -19,7 +20,7 @@ Pmx.initModule({
         process.exit(1);
     if (config.port == null)
         config.port = 8888;
-    let hosts = {}, handle = {
+    let hosts = {}, history = {}, handle = {
         "/": {
             type: "text/html",
             content: Fs.readFileSync("Client/Dashboard.html", "utf8"),
@@ -38,13 +39,35 @@ Pmx.initModule({
                 let payload = JSON.parse(data);
                 if (!payload.token || config.tokens.indexOf(payload.token) === -1)
                     throw new Error(`not authenticated`);
-                if (payload.host)
+                if (payload.host) {
                     hosts[payload.host] = payload;
+                    for (let pid of Object.keys(payload.snapshot))
+                        for (let key of Object.keys(payload.snapshot[pid].metric)) {
+                            if (!history[pid + key])
+                                history[pid + key] = [];
+                            let h = history[pid + key];
+                            h.push(payload.snapshot[pid].metric[key]);
+                            if (h.length > MAX_HISTORY)
+                                h.shift();
+                        }
+                }
             }
         },
         "/data": {
             type: "application/json",
             fn: () => JSON.stringify(hosts)
+        },
+        "/app": {
+            type: "application/json",
+            fn: (data) => {
+                let input = JSON.parse(data), snapshot = hosts[input.host].snapshot[input.pid], temp = {
+                    snapshot,
+                    history: {}
+                };
+                for (let key of Object.keys(snapshot))
+                    temp.history[key] = history[input.pid + key];
+                return JSON.stringify(temp);
+            }
         }
     };
     Http

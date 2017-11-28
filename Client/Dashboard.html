@@ -4,14 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="Dashboard.css">
+    <script src="Dashboard.js"></script>
     <title>pm2-health dashboard</title>
 </head>
 
 <body class="flex v list">
-    <h2>Dashboard</h2>
     <div id="content" class="fill auto flex v s3">loading ...</div>
     <a href="https://github.com/pankleks/pm2-health">pm2-health</a>
-    <script src="dashboard.js"></script>
+    <script>
+        dashboard(document.getElementById("content"));
+    </script>
 </body>
 
 </html>

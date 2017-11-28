@@ -10,7 +10,9 @@
   "license": "MIT",
   "config": {
     "port": 8888,
-    "tokens": []
+    "tokens": [
+      "54fe2349-5238-428b-b79c-94c07e77f53a"
+    ]
   },
   "devDependencies": {
     "@types/node": "^8.0.53"

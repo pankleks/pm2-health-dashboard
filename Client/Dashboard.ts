@@ -22,21 +22,21 @@ HTMLElement.prototype.$clear = function (this: HTMLElement) {
 }
 
 let
-    contentEl = document.getElementById("content");
+    dashboardT;
 
-async function dashboard() {
+async function dashboard(contentEl: HTMLElement) {
     let
         data = await fetch("/data");
 
     if (data.ok) {
         let
-            hosts = await data.json();
+            payload = await data.json();
 
         contentEl.$clear();
 
-        for (let host of Object.keys(hosts)) {
+        for (let host of Object.keys(payload)) {
             let
-                h = hosts[host],
+                h = payload[host],
                 hostEl = contentEl.$add("div", "flex v s3");
 
             hostEl.$add("div", "flex h center", el => {
@@ -57,13 +57,39 @@ async function dashboard() {
 
                             el.$add("small", v.bad ? "bad" : "").textContent = `${key}: ${v.v}`;
                         }
+
+                        el.onclick = () => {
+                            clearTimeout(dashboardT);
+                            app(contentEl, host, pid);
+                        };
                     });
                 }
             });
         }
     }
 
-    setTimeout(() => { dashboard(); }, 1000 * REFRESH_S);
+    dashboardT = setTimeout(() => { dashboard(contentEl); }, 1000 * REFRESH_S);
 }
 
-dashboard();
+async function app(contentEl: HTMLElement, host: string, pid: string) {
+    let
+        data = await fetch("/app", {
+            method: "POST",
+            body: JSON.stringify({ host, pid })
+        });
+
+    if (data.ok) {
+        let
+            payload = await data.json();
+
+        contentEl.$clear();
+
+        contentEl.$add("h2").textContent = payload.snapshot.app;
+
+        contentEl.$add("div", "flex v s3", el => {
+            for (let key of Object.keys(payload.snapshot.metric)) {
+                el.$add("p").textContent = key;
+            }
+        });
+    }
+}
