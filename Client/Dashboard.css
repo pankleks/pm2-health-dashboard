@@ -56,7 +56,8 @@ h1, h2, h3 {
 .box {
   background-color: #F0F0F0;
   padding: 3mm;
-  width: 6cm; }
+  width: 6cm;
+  cursor: pointer; }
 
 .bad {
   color: red; }

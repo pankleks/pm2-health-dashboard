@@ -28,6 +28,10 @@ Pmx.initModule({
             type: "text/html",
             content: Fs.readFileSync("Client/Dashboard.html", "utf8"),
         },
+        "/app.html": {
+            type: "text/html",
+            content: Fs.readFileSync("Client/App.html", "utf8"),
+        },
         "/dashboard.css": {
             type: "text/css",
             content: Fs.readFileSync("Client/Dashboard.css", "utf8")

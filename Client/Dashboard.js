@@ -1,5 +1,4 @@
 const REFRESH_S = 20;
-let dashboardT;
 async function initDashboard(contentEl) {
     let data = await fetch("/data");
     if (data.ok) {
@@ -21,21 +20,23 @@ async function initDashboard(contentEl) {
                             el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${v.v}</b>`;
                         }
                         el.onclick = () => {
-                            clearTimeout(dashboardT);
-                            initApp(contentEl, host, appId);
+                            window.location.href = `App.html?host=${encodeURIComponent(host)}&appId=${appId}`;
                         };
                     });
                 }
             });
         }
     }
-    dashboardT = setTimeout(() => { initDashboard(contentEl); }, 1000 * REFRESH_S);
+    setTimeout(() => { initDashboard(contentEl); }, 1000 * REFRESH_S);
 }
-async function initApp(contentEl, host, appId) {
+async function initApp(contentEl) {
+    let input = parseQS(location.search);
+    if (!input.host || !input.appId)
+        throw new Error(`no host/app`);
     google.charts.load("current", { packages: ["corechart"] });
     let data = await fetch("/app", {
         method: "POST",
-        body: JSON.stringify({ host, appId })
+        body: JSON.stringify(input)
     });
     if (data.ok) {
         let app = await data.json();
@@ -71,4 +72,14 @@ HTMLElement.prototype.$clear = function () {
     while (this.lastChild)
         this.removeChild(this.lastChild);
 };
+function parseQS(qs) {
+    let obj = {};
+    if (qs)
+        for (let temp of qs.substr(1).split("&")) {
+            let match = /([^=]+)=(.*)/.exec(temp);
+            if (match)
+                obj[match[1]] = decodeURIComponent(match[2]);
+        }
+    return obj;
+}
 //# sourceMappingURL=Dashboard.js.map

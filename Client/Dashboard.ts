@@ -1,8 +1,5 @@
 const REFRESH_S = 20;
 
-let
-    dashboardT;
-
 async function initDashboard(contentEl: HTMLElement) {
     let
         data = await fetch("/data");
@@ -38,8 +35,7 @@ async function initDashboard(contentEl: HTMLElement) {
                         }
 
                         el.onclick = () => {
-                            clearTimeout(dashboardT);
-                            initApp(contentEl, host, appId);
+                            window.location.href = `App.html?host=${encodeURIComponent(host)}&appId=${appId}`;
                         };
                     });
                 }
@@ -47,16 +43,21 @@ async function initDashboard(contentEl: HTMLElement) {
         }
     }
 
-    dashboardT = setTimeout(() => { initDashboard(contentEl); }, 1000 * REFRESH_S);
+    setTimeout(() => { initDashboard(contentEl); }, 1000 * REFRESH_S);
 }
 
-async function initApp(contentEl: HTMLElement, host: string, appId) {
+async function initApp(contentEl: HTMLElement) {
+    let
+        input = parseQS(location.search);
+    if (!input.host || !input.appId)
+        throw new Error(`no host/app`);
+
     google.charts.load("current", { packages: ["corechart"] });
 
     let
         data = await fetch("/app", {
             method: "POST",
-            body: JSON.stringify({ host, appId })
+            body: JSON.stringify(input)
         });
 
     if (data.ok) {

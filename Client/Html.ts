@@ -20,6 +20,21 @@ HTMLElement.prototype.$clear = function (this: HTMLElement) {
         this.removeChild(this.lastChild);
 }
 
+function parseQS(qs: string) {
+    let
+        obj = {};
+
+    if (qs)
+        for (let temp of qs.substr(1).split("&")) {
+            let
+                match = /([^=]+)=(.*)/.exec(temp);
+            if (match)
+                obj[match[1]] = decodeURIComponent(match[2]);
+        }
+
+    return <any>obj;
+}
+
 interface IValue {
     v: any;
     bad?: boolean;
