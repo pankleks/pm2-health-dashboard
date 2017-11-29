@@ -71,8 +71,6 @@ async function initApp(contentEl: HTMLElement) {
         contentEl.$add("div", "flex v s3", el => {
             for (let key in app.metric) {
                 if (app.metric[key].history && app.metric[key].history.length > 0) {
-                    el.$add("p").textContent = key;
-
                     let
                         chartEl = el.$add("div", "chart");
 
