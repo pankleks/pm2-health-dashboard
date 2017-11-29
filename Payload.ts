@@ -11,7 +11,10 @@ export interface IPayload {
         [appId: number]: {
             name: string;
             metric: {
-                [key: string]: IValue;
+                [key: string]: {
+                    history: boolean;
+                    v: IValue;
+                };
             }
         }
     }

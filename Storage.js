@@ -33,13 +33,15 @@ class Storage {
                     metric: {}
                 };
             for (let key in payload.app[appId].metric) {
-                let v = payload.app[appId].metric[key], metric = app.metric[key];
+                let v = payload.app[appId].metric[key].v, metric = app.metric[key];
                 if (!metric)
                     metric = app.metric[key] = { history: [] };
                 metric.v = v;
-                metric.history.push(v);
-                if (metric.history.length > MAX_HISTORY)
-                    metric.history.shift();
+                if (payload.app[appId].metric[key].history) {
+                    metric.history.push(v);
+                    if (metric.history.length > MAX_HISTORY)
+                        metric.history.shift();
+                }
             }
         }
         if (this._config.persist)
