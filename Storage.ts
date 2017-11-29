@@ -2,12 +2,11 @@ import * as Fs from "fs";
 import * as Path from "path";
 import { IValue, IPayload } from "./Payload";
 
-const MAX_HISTORY = 1440;
-
 export interface IStorageConfig {
     tokens: string[];
     persist: boolean;
     path: string;
+    maxHistory: number;
 }
 
 interface IApp {
@@ -40,6 +39,8 @@ export class Storage {
     constructor(private _config: IStorageConfig) {
         if (!this._config.path)
             this._config.path = "./";
+        if (this._config.maxHistory == null)
+            this._config.maxHistory = 1440; // ~1d
     }
 
     apply(payload: IPayload) {
@@ -74,11 +75,11 @@ export class Storage {
                 if (!metric)
                     metric = app.metric[key] = { history: [] }
 
-                metric.v = v
+                metric.v = v;
 
                 if (payload.app[appId].metric[key].history) {
                     metric.history.push(v);
-                    if (metric.history.length > MAX_HISTORY)
+                    if (metric.history.length > this._config.maxHistory)
                         metric.history.shift();
                 }
             }

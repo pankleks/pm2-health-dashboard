@@ -2,13 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Fs = require("fs");
 const Path = require("path");
-const MAX_HISTORY = 1440;
 class Storage {
     constructor(_config) {
         this._config = _config;
         this._hosts = {};
         if (!this._config.path)
             this._config.path = "./";
+        if (this._config.maxHistory == null)
+            this._config.maxHistory = 1440; // ~1d
     }
     get hosts() {
         return this._hosts;
@@ -39,7 +40,7 @@ class Storage {
                 metric.v = v;
                 if (payload.app[appId].metric[key].history) {
                     metric.history.push(v);
-                    if (metric.history.length > MAX_HISTORY)
+                    if (metric.history.length > this._config.maxHistory)
                         metric.history.shift();
                 }
             }

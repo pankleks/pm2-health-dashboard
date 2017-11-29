@@ -1,6 +1,6 @@
 {
   "name": "pm2-health-dashboard",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "",
   "main": "App.js",
   "scripts": {
@@ -14,7 +14,8 @@
       "54fe2349-5238-428b-b79c-94c07e77f53a"
     ],
     "persist": true,
-    "path": "./"
+    "path": "./",
+    "maxHistory": 1440
   },
   "devDependencies": {
     "@types/node": "^8.0.53",
