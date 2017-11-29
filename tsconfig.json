@@ -3,5 +3,10 @@
         "target": "es2017",
         "sourceMap": true,
         "module": "commonjs"
-    }
+    },
+    "include": [
+        "Shared.ts",
+        "Storage.ts",
+        "App.ts"
+    ]
 }

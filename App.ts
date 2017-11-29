@@ -3,9 +3,11 @@ import * as Url from "url";
 import * as Fs from "fs";
 import * as Qs from "querystring";
 import * as Pmx from "pmx";
-import { IPayload } from "./Snapshot";
+import { Storage, IStorageConfig } from "./Storage";
 
-const MAX_HISTORY = 1440;
+interface IConfig extends IStorageConfig {
+    port: number;
+}
 
 Pmx.initModule({
     type: "generic",
@@ -17,7 +19,7 @@ Pmx.initModule({
         cpu: true,
         mem: true
     }
-}, (ex, config) => {
+}, (ex, config: IConfig) => {
     if (ex)
         process.exit(1);
 
@@ -25,8 +27,11 @@ Pmx.initModule({
         config.port = 8888;
 
     let
-        hosts: { [host: string]: IPayload } = {},
-        history = {},
+        storage = new Storage(config);
+
+    storage.load();
+
+    let
         handle = {
             "/": {
                 type: "text/html",
@@ -43,48 +48,22 @@ Pmx.initModule({
             "/push": {
                 type: "application/json",
                 fn: (data) => {
-                    let
-                        payload = <IPayload>JSON.parse(data);
-                    if (!payload.token || config.tokens.indexOf(payload.token) === -1)
-                        throw new Error(`not authenticated`);
-                    if (payload.host) {
-                        hosts[payload.host] = payload;
-
-                        for (let pid of Object.keys(payload.snapshot))
-                            for (let key of Object.keys(payload.snapshot[pid].metric)) {
-                                if (!history[pid + key])
-                                    history[pid + key] = [];
-
-                                let
-                                    h = history[pid + key];
-
-                                h.push(payload.snapshot[pid].metric[key]);
-                                if (h.length > MAX_HISTORY)
-                                    h.shift();
-                            }
-
-                    }
+                    storage.apply(JSON.parse(data));
                 }
             },
             "/data": {
                 type: "application/json",
-                fn: () => JSON.stringify(hosts)
+                fn: () => JSON.stringify(storage.hosts)
             },
             "/app": {
                 type: "application/json",
                 fn: (data) => {
                     let
-                        input = JSON.parse(data),
-                        snapshot = hosts[input.host].snapshot[input.pid],
-                        temp = {
-                            snapshot,
-                            history: {}
-                        };
+                        input = JSON.parse(data);
+                    if (input.host in storage.hosts && input.appId in storage.hosts[input.host].app)
+                        return JSON.stringify(storage.hosts[input.host].app[input.appId]);
 
-                    for (let key of Object.keys(snapshot.metric))
-                        temp.history[key] = history[input.pid + key];
-
-                    return JSON.stringify(temp);
+                    throw new Error(`no host/app`);
                 }
             }
         };

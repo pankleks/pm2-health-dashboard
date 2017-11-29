@@ -1,6 +1,6 @@
 {
   "name": "pm2-health-dashboard",
-  "version": "1.0.14",
+  "version": "1.0.17",
   "description": "",
   "main": "App.js",
   "scripts": {
@@ -12,7 +12,9 @@
     "port": 8888,
     "tokens": [
       "54fe2349-5238-428b-b79c-94c07e77f53a"
-    ]
+    ],
+    "persist": true,
+    "path": "./"
   },
   "devDependencies": {
     "@types/node": "^8.0.53",

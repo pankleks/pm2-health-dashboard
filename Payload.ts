@@ -7,9 +7,9 @@ export interface IPayload {
     token?: string;
     host: string,
     timeStamp?: number,
-    snapshot: {
-        [pid: string]: {
-            app: string;
+    app: {
+        [appId: number]: {
+            name: string;
             metric: {
                 [key: string]: IValue;
             }

@@ -4,9 +4,15 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "typescript",
+            "label": "backend",
             "type": "typescript",
             "tsconfig": "tsconfig.json",
+            "problemMatcher": "$tsc"
+        },
+        {
+            "label": "client",
+            "type": "typescript",
+            "tsconfig": "Client\\tsconfig.json",
             "problemMatcher": "$tsc"
         },
         {
@@ -22,7 +28,8 @@
         {
             "label": "all",
             "dependsOn": [
-                "typescript",
+                "backend",
+                "client",
                 "sass"
             ],
             "group": {

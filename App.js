@@ -5,7 +5,7 @@ const Url = require("url");
 const Fs = require("fs");
 const Qs = require("querystring");
 const Pmx = require("pmx");
-const MAX_HISTORY = 1440;
+const Storage_1 = require("./Storage");
 Pmx.initModule({
     type: "generic",
     el: {
@@ -21,7 +21,9 @@ Pmx.initModule({
         process.exit(1);
     if (config.port == null)
         config.port = 8888;
-    let hosts = {}, history = {}, handle = {
+    let storage = new Storage_1.Storage(config);
+    storage.load();
+    let handle = {
         "/": {
             type: "text/html",
             content: Fs.readFileSync("Client/Dashboard.html", "utf8"),
@@ -37,37 +39,20 @@ Pmx.initModule({
         "/push": {
             type: "application/json",
             fn: (data) => {
-                let payload = JSON.parse(data);
-                if (!payload.token || config.tokens.indexOf(payload.token) === -1)
-                    throw new Error(`not authenticated`);
-                if (payload.host) {
-                    hosts[payload.host] = payload;
-                    for (let pid of Object.keys(payload.snapshot))
-                        for (let key of Object.keys(payload.snapshot[pid].metric)) {
-                            if (!history[pid + key])
-                                history[pid + key] = [];
-                            let h = history[pid + key];
-                            h.push(payload.snapshot[pid].metric[key]);
-                            if (h.length > MAX_HISTORY)
-                                h.shift();
-                        }
-                }
+                storage.apply(JSON.parse(data));
             }
         },
         "/data": {
             type: "application/json",
-            fn: () => JSON.stringify(hosts)
+            fn: () => JSON.stringify(storage.hosts)
         },
         "/app": {
             type: "application/json",
             fn: (data) => {
-                let input = JSON.parse(data), snapshot = hosts[input.host].snapshot[input.pid], temp = {
-                    snapshot,
-                    history: {}
-                };
-                for (let key of Object.keys(snapshot.metric))
-                    temp.history[key] = history[input.pid + key];
-                return JSON.stringify(temp);
+                let input = JSON.parse(data);
+                if (input.host in storage.hosts && input.appId in storage.hosts[input.host].app)
+                    return JSON.stringify(storage.hosts[input.host].app[input.appId]);
+                throw new Error(`no host/app`);
             }
         }
     };

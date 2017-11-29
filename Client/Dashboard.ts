@@ -1,42 +1,21 @@
 const REFRESH_S = 20;
 
-interface HTMLElement {
-    $add<T extends HTMLElement>(tag: string, css?: string, fn?: (el: T) => void): T;
-    $clear(): void;
-}
-
-HTMLElement.prototype.$add = function <T extends HTMLElement>(this: HTMLElement, tag: string, css?: string, fn?: (el: T) => void) {
-    let
-        el = <T>document.createElement(tag);
-    if (css)
-        el.className = css;
-    if (typeof fn === "function")
-        fn(el);
-    this.appendChild(el);
-    return el;
-}
-
-HTMLElement.prototype.$clear = function (this: HTMLElement) {
-    while (this.lastChild)
-        this.removeChild(this.lastChild);
-}
-
 let
     dashboardT;
 
-async function dashboard(contentEl: HTMLElement) {
+async function initDashboard(contentEl: HTMLElement) {
     let
         data = await fetch("/data");
 
     if (data.ok) {
         let
-            payload = await data.json();
+            hosts: IHosts = await data.json();
 
         contentEl.$clear();
 
-        for (let host of Object.keys(payload)) {
+        for (let host in hosts) {
             let
-                h = payload[host],
+                h = hosts[host],
                 hostEl = contentEl.$add("div", "flex v s3");
 
             hostEl.$add("div", "flex h center", el => {
@@ -45,22 +24,22 @@ async function dashboard(contentEl: HTMLElement) {
             });
 
             hostEl.$add("div", "flex w s3", el => {
-                for (let pid of Object.keys(h.snapshot)) {
+                for (let appId in h.app) {
                     el.$add("div", "box flex v s1", el => {
                         let
-                            p = h.snapshot[pid];
-                        el.$add("u").textContent = `${p.app}:${pid}`;
+                            app = h.app[appId];
+                        el.$add("u").textContent = `${app.name}:${appId}`;
 
-                        for (let key of Object.keys(p.metric)) {
+                        for (let key in app.metric) {
                             let
-                                v = p.metric[key];
+                                v = app.metric[key].v;
 
                             el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${v.v}</b>`;
                         }
 
                         el.onclick = () => {
                             clearTimeout(dashboardT);
-                            app(contentEl, host, pid);
+                            initApp(contentEl, host, appId);
                         };
                     });
                 }
@@ -68,28 +47,28 @@ async function dashboard(contentEl: HTMLElement) {
         }
     }
 
-    dashboardT = setTimeout(() => { dashboard(contentEl); }, 1000 * REFRESH_S);
+    dashboardT = setTimeout(() => { initDashboard(contentEl); }, 1000 * REFRESH_S);
 }
 
-async function app(contentEl: HTMLElement, host: string, pid: string) {
+async function initApp(contentEl: HTMLElement, host: string, appId) {
     google.charts.load("current", { packages: ["corechart"] });
 
     let
         data = await fetch("/app", {
             method: "POST",
-            body: JSON.stringify({ host, pid })
+            body: JSON.stringify({ host, appId })
         });
 
     if (data.ok) {
         let
-            payload = await data.json();
+            app: IApp = await data.json();
 
         contentEl.$clear();
 
-        contentEl.$add("h2").textContent = payload.snapshot.app;
+        contentEl.$add("h2").textContent = app.name;
 
         contentEl.$add("div", "flex v s3", el => {
-            for (let key of Object.keys(payload.snapshot.metric)) {
+            for (let key in app.metric) {
                 el.$add("p").textContent = key;
 
                 let
@@ -98,7 +77,7 @@ async function app(contentEl: HTMLElement, host: string, pid: string) {
                 google.charts.setOnLoadCallback(() => {
                     let
                         data = google.visualization.arrayToDataTable(
-                            payload.history[key].map((e, i) => [i, e.v]),
+                            app.metric[key].history.map((e, i) => [i, e.v]),
                             true),
                         options: google.visualization.LineChartOptions = {
                             title: key,
