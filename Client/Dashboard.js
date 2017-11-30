@@ -59,6 +59,7 @@ async function initApp(contentEl) {
             }
         });
     }
+    setTimeout(() => { initApp(contentEl); }, 1000 * REFRESH_S);
 }
 HTMLElement.prototype.$add = function (tag, css, fn) {
     let el = document.createElement(tag);

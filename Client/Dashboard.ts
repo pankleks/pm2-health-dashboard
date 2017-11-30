@@ -93,4 +93,6 @@ async function initApp(contentEl: HTMLElement) {
             }
         });
     }
+
+    setTimeout(() => { initApp(contentEl); }, 1000 * REFRESH_S);
 }
