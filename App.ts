@@ -31,6 +31,11 @@ Pmx.initModule({
 
     storage.load();
 
+    Pmx.action("erase", (reply) => {
+        storage.erase();
+        reply(`erased`);
+    });
+
     let
         handle = {
             "/": {

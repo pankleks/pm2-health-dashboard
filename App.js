@@ -23,6 +23,10 @@ Pmx.initModule({
         config.port = 8888;
     let storage = new Storage_1.Storage(config);
     storage.load();
+    Pmx.action("erase", (reply) => {
+        storage.erase();
+        reply(`erased`);
+    });
     let handle = {
         "/": {
             type: "text/html",

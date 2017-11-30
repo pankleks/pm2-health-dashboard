@@ -111,4 +111,8 @@ export class Storage {
                     console.error(`failed to load ${f}: ${ex.message || ex}`);
                 }
     }
+
+    erase() {
+        this._hosts = {};
+    }
 }

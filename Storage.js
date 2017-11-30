@@ -67,6 +67,9 @@ class Storage {
                     console.error(`failed to load ${f}: ${ex.message || ex}`);
                 }
     }
+    erase() {
+        this._hosts = {};
+    }
 }
 exports.Storage = Storage;
 //# sourceMappingURL=Storage.js.map
