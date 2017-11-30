@@ -16,9 +16,7 @@ class Storage {
         return this._hosts;
     }
     appData(host, appId) {
-        if (!this._hosts[host])
-            throw new Error(`no host`);
-        let app = this._hosts[host].app[appId];
+        let h = this.host(host), app = this._hosts[host].app[appId];
         if (!app)
             throw new Error(`no app`);
         let history = {};
@@ -96,6 +94,18 @@ class Storage {
             if (ex)
                 console.error(`failed to store ${name}: ${ex.message || ex}`);
         });
+    }
+    host(host) {
+        let h = this._hosts[host];
+        if (!h)
+            throw new Error(`host ${host} not found`);
+        return h;
+    }
+    deleteApp(host, appId) {
+        let h = this.host(host);
+        for (let key in h.app[appId].metric)
+            delete this._history[host][appId + key];
+        delete h.app[appId];
     }
 }
 exports.Storage = Storage;

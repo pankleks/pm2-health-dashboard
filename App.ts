@@ -72,6 +72,14 @@ Pmx.initModule({
 
                     return JSON.stringify(storage.appData(input.host, input.appId));
                 }
+            },
+            "/app/delete": {
+                type: "application/json",
+                fn: (data) => {
+                    let
+                        input = JSON.parse(data);
+                    storage.deleteApp(input.host, input.appId);
+                }
             }
         };
 
@@ -112,6 +120,7 @@ Pmx.initModule({
                 catch (ex) {
                     console.error(`fail: ${ex.message || ex}`);
                     response.writeHead(500);
+                    await write(response, `fail: ${ex.message || ex}`);
                 }
                 finally {
                     response.end();

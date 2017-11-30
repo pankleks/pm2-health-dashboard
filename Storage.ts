@@ -42,9 +42,8 @@ export class Storage {
     }
 
     appData(host: string, appId: number) {
-        if (!this._hosts[host])
-            throw new Error(`no host`);
         let
+            h = this.host(host),
             app = this._hosts[host].app[appId];
         if (!app)
             throw new Error(`no app`);
@@ -157,5 +156,23 @@ export class Storage {
             if (ex)
                 console.error(`failed to store ${name}: ${ex.message || ex}`);
         });
+    }
+
+    private host(host: string) {
+        let
+            h = this._hosts[host];
+        if (!h)
+            throw new Error(`host ${host} not found`);
+        return h;
+    }
+
+    deleteApp(host: string, appId: number) {
+        let
+            h = this.host(host);
+
+        for (let key in h.app[appId].metric)
+            delete this._history[host][appId + key];
+
+        delete h.app[appId];
     }
 }

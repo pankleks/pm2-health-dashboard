@@ -20,6 +20,22 @@ HTMLElement.prototype.$clear = function (this: HTMLElement) {
         this.removeChild(this.lastChild);
 }
 
+async function json<T>(path: string, data?: any) {
+    let
+        init = {};
+    if (data != null)
+        init = {
+            method: "POST",
+            body: JSON.stringify(data)
+        }
+    let
+        resp = await fetch(path, init);
+    if (resp.ok)
+        return <T>(await resp.json());
+
+    throw new Error(`fetch ${path} failed`);
+}
+
 function parseQS(qs: string) {
     let
         obj = {};
