@@ -41,20 +41,23 @@ interface IValue {
 }
 
 interface IApp {
+    id: number;
     name: string;
     metric: {
-        [key: string]: {
-            v?: IValue;
-            history: IValue[];
-        }
+        [key: string]: IValue;
     }
 }
 
 interface IHosts {
     [host: string]: {
+        name: string;
         timeStamp: number;
         app: {
             [appId: number]: IApp
         }
     }
+}
+
+interface IHistory {
+    [appIdKey: string]: IValue[];
 }

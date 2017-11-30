@@ -69,10 +69,8 @@ Pmx.initModule({
                 fn: (data) => {
                     let
                         input = JSON.parse(data);
-                    if (input.host in storage.hosts && input.appId in storage.hosts[input.host].app)
-                        return JSON.stringify(storage.hosts[input.host].app[input.appId]);
 
-                    throw new Error(`no host/app`);
+                    return JSON.stringify(storage.appData(input.host, input.appId));
                 }
             }
         };
