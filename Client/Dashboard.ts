@@ -58,10 +58,12 @@ async function initApp(contentEl: HTMLElement) {
         el.$add("h2").textContent = `${input.host} ${payload.app.name}:${payload.app.id}`;
         el.$add<HTMLAnchorElement>("a", undefined, el => {
             el.textContent = "delete";
-            el.href = "#";
+            el.href = "";
             el.onclick = async () => {
-                await json("/app/delete", input);
-                window.location.href = "/";
+                if (confirm("are you sure?")) {
+                    await json("/app/delete", input);
+                    history.back();
+                }
             };
         });
     });
