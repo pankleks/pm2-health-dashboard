@@ -79,12 +79,14 @@ HTMLElement.prototype.$clear = function () {
         this.removeChild(this.lastChild);
 };
 async function json(path, data) {
-    let init = {};
-    if (data != null)
-        init = {
-            method: "POST",
-            body: JSON.stringify(data)
-        };
+    let init = {
+        credentials: "same-origin",
+        method: "GET"
+    };
+    if (data != null) {
+        init.method = "POST";
+        init.body = JSON.stringify(data);
+    }
     let resp = await fetch(path, init);
     if (resp.ok)
         return (await resp.json());

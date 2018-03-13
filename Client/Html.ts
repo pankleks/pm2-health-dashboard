@@ -22,12 +22,16 @@ HTMLElement.prototype.$clear = function (this: HTMLElement) {
 
 async function json<T>(path: string, data?: any) {
     let
-        init = {};
-    if (data != null)
-        init = {
-            method: "POST",
-            body: JSON.stringify(data)
-        }
+        init: any = {
+            credentials: "same-origin",
+            method: "GET"
+        };
+
+    if (data != null) {
+        init.method = "POST";
+        init.body = JSON.stringify(data)
+    }
+
     let
         resp = await fetch(path, init);
     if (resp.ok)
