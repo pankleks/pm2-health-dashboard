@@ -15,7 +15,9 @@ export interface IPayload {
                     history: boolean;
                     v: IValue;
                 };
-            }
+            };
+            timeStamp?: number;
+            inactive: boolean;
         }
     }
 }

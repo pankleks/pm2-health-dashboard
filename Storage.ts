@@ -12,6 +12,7 @@ export interface IStorageConfig {
 interface IApp {
     id: number;
     name: string;
+    inactive: boolean;
     metric: {
         [key: string]: IValue;
     }
@@ -93,12 +94,12 @@ export class Storage {
                 app = host.app[appId] = {
                     id: parseInt(appId),
                     name: payload.app[appId].name,
+                    inactive: payload.app[appId].inactive,
                     metric: {}
                 };
 
             for (let key in payload.app[appId].metric) {
-                let
-                    v = payload.app[appId].metric[key].v;
+                const v = payload.app[appId].metric[key].v;
                 app.metric[key] = v;
 
                 if (payload.app[appId].metric[key].history)

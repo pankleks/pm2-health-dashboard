@@ -1,14 +1,13 @@
 const REFRESH_S = 20;
 
 async function initDashboard(contentEl: HTMLElement) {
-    let
-        hosts = await json<IHosts>("/data");
+    const hosts = await json<IHosts>("/data");
 
     contentEl.$clear();
 
-    for (let host in hosts) {
-        let
-            h = hosts[host],
+    for (const hostId of Object.keys(hosts)) {
+        const
+            h = hosts[hostId],
             hostEl = contentEl.$add("div", "flex v s3");
 
         hostEl.$add("div", "flex h center", el => {
@@ -17,21 +16,23 @@ async function initDashboard(contentEl: HTMLElement) {
         });
 
         hostEl.$add("div", "flex w s3", el => {
-            for (let appId in h.app) {
+            for (const appId of Object.keys(h.app)) {
+                const app = h.app[<any>appId];
+
+                if (app.inactive)
+                    continue;
+
                 el.$add("div", "box flex v s1", el => {
-                    let
-                        app = h.app[appId];
                     el.$add("u").textContent = `${app.name}:${appId}`;
 
                     for (let key in app.metric) {
-                        let
-                            v = app.metric[key];
+                        const v = app.metric[key];
 
                         el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${v.v}</b>`;
                     }
 
                     el.onclick = () => {
-                        window.location.href = `App.html?host=${encodeURIComponent(host)}&appId=${appId}`;
+                        window.location.href = `App.html?host=${encodeURIComponent(hostId)}&appId=${appId}`;
                     };
                 });
             }
@@ -42,15 +43,13 @@ async function initDashboard(contentEl: HTMLElement) {
 }
 
 async function initApp(contentEl: HTMLElement) {
-    let
-        input = parseQS(location.search);
+    const input = parseQS(location.search);
     if (!input.host || !input.appId)
         throw new Error(`no host/app`);
 
     google.charts.load("current", { packages: ["corechart"] });
 
-    let
-        payload = await json<{ app: IApp, history: IHistory }>("/app", input);
+    const payload = await json<{ app: IApp, history: IHistory }>("/app", input);
 
     contentEl.$clear();
 
@@ -70,14 +69,12 @@ async function initApp(contentEl: HTMLElement) {
 
     contentEl.$add("div", "flex v s3", el => {
         for (let key in payload.app.metric) {
-            let
-                history = payload.history[payload.app.id + key];
+            const history = payload.history[payload.app.id + key];
             if (history && history.length > 0) {
-                let
-                    chartEl = el.$add("div", "chart");
+                const chartEl = el.$add("div", "chart");
 
                 google.charts.setOnLoadCallback(() => {
-                    let
+                    const
                         data = google.visualization.arrayToDataTable(
                             history.map((e, i) => [i, e.v]),
                             true),
@@ -85,9 +82,7 @@ async function initApp(contentEl: HTMLElement) {
                             title: key,
                             curveType: "function",
                             legend: "none"
-                        };
-
-                    let
+                        },
                         chart = new google.visualization.LineChart(chartEl);
                     chart.draw(data, options);
                 });

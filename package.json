@@ -1,6 +1,6 @@
 {
   "name": "pm2-health-dashboard",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "description": "",
   "main": "App.js",
   "scripts": {
@@ -18,10 +18,10 @@
     "maxHistory": 1440
   },
   "devDependencies": {
-    "@types/node": "^8.0.53",
-    "@types/google.visualization": "^0.0.41"
+    "@types/node": "^8.10.21",
+    "@types/google.visualization": "^0.0.42"
   },
   "dependencies": {
-    "pm2": "^2.8.0"
+    "pm2": "2.10.4"
   }
 }

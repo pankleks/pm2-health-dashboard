@@ -63,6 +63,7 @@ interface IValue {
 interface IApp {
     id: number;
     name: string;
+    inactive: boolean;
     metric: {
         [key: string]: IValue;
     }
