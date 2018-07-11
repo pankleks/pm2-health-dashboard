@@ -1,4 +1,9 @@
 const REFRESH_S = 20;
+function formatV(v) {
+    if (typeof v === "number")
+        return v.toFixed(1);
+    return v;
+}
 async function initDashboard(contentEl) {
     const hosts = await json("/data");
     contentEl.$clear();
@@ -17,7 +22,7 @@ async function initDashboard(contentEl) {
                     el.$add("u").textContent = `${app.name}:${appId}`;
                     for (const key of Object.keys(app.metric)) {
                         const v = app.metric[key];
-                        el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${v.v}</b>`;
+                        el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${formatV(v.v)}</b>`;
                     }
                     el.onclick = () => {
                         window.location.href = `App.html?host=${encodeURIComponent(hostId)}&appId=${appId}`;
