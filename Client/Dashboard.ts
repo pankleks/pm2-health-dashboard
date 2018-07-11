@@ -25,7 +25,7 @@ async function initDashboard(contentEl: HTMLElement) {
                 el.$add("div", "box flex v s1", el => {
                     el.$add("u").textContent = `${app.name}:${appId}`;
 
-                    for (let key in app.metric) {
+                    for (const key of Object.keys(app.metric)) {
                         const v = app.metric[key];
 
                         el.$add("small", v.bad ? "bad" : "").innerHTML = `${key}: <b>${v.v}</b>`;
@@ -68,7 +68,7 @@ async function initApp(contentEl: HTMLElement) {
     });
 
     contentEl.$add("div", "flex v s3", el => {
-        for (let key in payload.app.metric) {
+        for (const key of Object.keys(payload.app.metric)) {
             const history = payload.history[payload.app.id + key];
             if (history && history.length > 0) {
                 const chartEl = el.$add("div", "chart");
