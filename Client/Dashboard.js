@@ -96,7 +96,7 @@ async function json(path, data) {
     let resp = await fetch(path, init);
     if (resp.ok)
         return (await resp.json());
-    throw new Error(`fetch ${path} failed`);
+    throw new Error(`fetch ${path} failed -> ${resp.statusText}`);
 }
 function parseQS(qs) {
     let obj = {};

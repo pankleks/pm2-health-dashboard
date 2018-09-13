@@ -37,7 +37,7 @@ async function json<T>(path: string, data?: any) {
     if (resp.ok)
         return <T>(await resp.json());
 
-    throw new Error(`fetch ${path} failed`);
+    throw new Error(`fetch ${path} failed -> ${resp.statusText}`);
 }
 
 function parseQS(qs: string) {
